@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
-import {Button, TextInput, View} from 'react-native';
+import {StyleSheet, TextInput, View} from 'react-native';
+import {ButtonSolid} from 'react-native-ui-buttons';
 
 interface Props {
   onClickSave: (title: string) => void;
@@ -7,6 +8,24 @@ interface Props {
 
 const InputForm = (props: Props) => {
   const [title, setTitle] = useState('');
+
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      flexDirection: 'row',
+      justifyContent: 'space-evenly',
+      marginTop: 10,
+      alignContent: 'center',
+      textAlign: 'center',
+    },
+    input: {
+      width: '70%',
+      backgroundColor: 'lavenderblush',
+      color: 'black',
+      textAlignments: 'center',
+      fontFamily: 'Montserrat',
+    },
+  });
 
   const saveTaskTitle = () => {
     props.onClickSave(title);
@@ -17,23 +36,14 @@ const InputForm = (props: Props) => {
     setTitle(text);
   };
 
-  const returnValue = () => {
-    props.onClickSave('');
-  };
-
   return (
-    <View>
+    <View style={styles.container}>
       <TextInput
-        style={{
-          height: 40,
-          borderColor: 'gray',
-          borderWidth: 1,
-        }}
-        defaultValue="Todo title"
+        style={styles.input}
         onChangeText={changingTitle}
-        onBlur={returnValue}
+        value={title}
       />
-      <Button title="Add" onPress={saveTaskTitle} />
+      <ButtonSolid title="Add" onPress={saveTaskTitle} />
     </View>
   );
 };
