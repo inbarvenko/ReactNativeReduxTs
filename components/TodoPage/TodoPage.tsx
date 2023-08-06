@@ -4,6 +4,7 @@ import {useAppDispatch, useAppSelector} from '../../redux/hooks';
 import Todo from '../Todo/Todo';
 import {addTask} from '../../redux/toDoList';
 import InputForm from '../InputForm/InputForm';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const TodoPage = () => {
   const styles = StyleSheet.create({
@@ -17,6 +18,7 @@ const TodoPage = () => {
       alignSelf: 'center',
     },
     page: {
+      flex: 1,
       backgroundColor: 'pink',
     },
     text: {
@@ -39,7 +41,8 @@ const TodoPage = () => {
       marginBottom: 40,
       paddingHorizontal: 25,
       fontSize: 10,
-      alignSelf: 'center'
+      alignSelf: 'center',
+      textAlign: 'center'
     },
   });
 
@@ -54,7 +57,7 @@ const TodoPage = () => {
   };
 
   return (
-    <ScrollView style={styles.page}>
+    <SafeAreaView style={styles.page}>
       <Text style={styles.mainText}>Todo list app</Text>
       <InputForm onClickSave={addTodo} />
       <Text style={styles.text}>Active Todos: {activeTodos}</Text>
@@ -65,15 +68,15 @@ const TodoPage = () => {
           renderItem={({item}) => <Todo todo={item} />}
         />
       ) : (
-        <Text>No tasks</Text>
+        <Text style={styles.descr}>No tasks</Text>
       )}
       {toDoList.length ? (
         <Text style={styles.descr}>
-          To edit task use doubleclick on chosen one. To save edit of task press
-          Enter, to cancel push mouse somewhere else.
+          To edit task use long press on chosen one. {'\n'}
+          To save edit of task press OK.
         </Text>
       ) : null}
-    </ScrollView>
+    </SafeAreaView>
   );
 };
 

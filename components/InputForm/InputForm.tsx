@@ -11,7 +11,6 @@ const InputForm = (props: Props) => {
 
   const styles = StyleSheet.create({
     container: {
-      flex: 1,
       flexDirection: 'row',
       justifyContent: 'space-evenly',
       marginTop: 10,
@@ -22,7 +21,7 @@ const InputForm = (props: Props) => {
       width: '70%',
       backgroundColor: 'lavenderblush',
       color: 'black',
-      textAlignments: 'center',
+      textAlign: 'center',
       fontFamily: 'Montserrat',
     },
   });
