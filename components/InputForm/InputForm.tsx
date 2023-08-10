@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {StyleSheet, TextInput, View} from 'react-native';
-import {ButtonSolid} from 'react-native-ui-buttons';
+import {ButtonOutline, ButtonSolid} from 'react-native-ui-buttons';
 
 interface Props {
   onClickSave: (title: string) => void;
@@ -42,7 +42,7 @@ const InputForm = (props: Props) => {
         onChangeText={changingTitle}
         value={title}
       />
-      <ButtonSolid title="Add" onPress={saveTaskTitle} />
+      <ButtonOutline title="Add" onPress={saveTaskTitle} />
     </View>
   );
 };

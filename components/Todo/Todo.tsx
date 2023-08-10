@@ -12,6 +12,7 @@ import {ButtonSolid} from 'react-native-ui-buttons';
 
 interface Props {
   todo: ToDoType;
+  del: () => void;
 }
 
 const styles = StyleSheet.create({
@@ -54,10 +55,11 @@ const Todo = (props: Props) => {
 
   const deleteTodo = () => {
     dispatch(removeTask(props.todo.id));
+    props.del();
   };
 
   const editTodo = () => {
-    dispatch(changeStatusTask(props.todo.id));
+    dispatch(changeStatusTask({id: props.todo.id, completed: props.todo.completed}));
   };
 
   const changeTodo = () => {
