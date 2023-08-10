@@ -1,6 +1,6 @@
 import {createSlice} from '@reduxjs/toolkit';
 import type {PayloadAction} from '@reduxjs/toolkit';
-import {ToDoType, FilterEnum} from '../types';
+import {ToDoType, FilterEnum} from '../../types';
 import {addTodo, deleteTodo, getTodos, toggleCompleted} from '../db/todoApi';
 
 type InitialState = {
