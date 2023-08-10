@@ -1,19 +1,12 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import {
   Text,
-  ScrollView,
-  FlatList,
   StyleSheet,
-  GestureResponderEvent,
-  View,
 } from 'react-native';
 import {useAppDispatch, useAppSelector} from '../../redux/hooks';
-import Todo from '../Todo/Todo';
-import {addTask, setCurrentPage} from '../../redux/toDoList';
+import {addTask} from '../../redux/toDoList';
 import InputForm from '../InputForm/InputForm';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import {getTodos} from '../../db/todoApi';
-import {ButtonOutline, ButtonSolid} from 'react-native-ui-buttons';
 import TodoList from '../TodoList/TodoList';
 
 const TodoPage = () => {

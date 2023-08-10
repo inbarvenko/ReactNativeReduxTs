@@ -1,5 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { ToDoType } from "../types";
+import { ToDoType } from "../../types";
 import { supabase } from "./initSupabase";
 import 'react-native-url-polyfill/auto'
 

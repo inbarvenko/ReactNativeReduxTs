@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
-import {Button, StyleSheet, Text, TextInput, View} from 'react-native';
-import {ToDoType} from '../../types';
+import {StyleSheet, Text, TextInput, View} from 'react-native';
+import {ToDoType} from '../../../types';
 import BouncyCheckbox from 'react-native-bouncy-checkbox';
 import {
   changeStatusTask,
