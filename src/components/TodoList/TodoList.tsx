@@ -39,7 +39,7 @@ const TodoList = () => {
       alignContent: 'center',
     },
     button: {
-      flex: 0.1,
+      width: '20%',
       marginHorizontal: 5,
     },
   });
@@ -49,14 +49,13 @@ const TodoList = () => {
   const pages = useAppSelector(state => state.todoData.pages);
   const currentPage = useAppSelector(state => state.todoData.currentPage);
   const activeTodos = useAppSelector((state) => state.todoData.activeTasks);
-  const [del, setDel] = useState(false)
-  console.log('length: ', toDoList.length)
+  const [del, setDel] =useState(false);
+
   if(toDoList.length < 1) { dispatch(setCurrentPage(1)) }
 
   useEffect(() => {
-    //менять на фронте storage и в зависимость поставить тудулист (пост запросы)
-
     dispatch(getTodos(currentPage));
+
   }, [currentPage, activeTodos, del]);
 
   const changeCurrentPage = (e: GestureResponderEvent, parametr: number) => {
@@ -65,18 +64,19 @@ const TodoList = () => {
     }
   };
 
-  const delChange = () => {
-    console.log('del change!')
+  const change = () => {
     setDel(!del)
   }
+
 
   return (
     <View>
       {toDoList.length ? (
         <FlatList
           style={styles.list}
+          windowSize={5}
           data={toDoList}
-          renderItem={({item}) => <Todo del={delChange} todo={item} key={item.id} />}
+          renderItem={({item}) => <Todo delFun={change} todo={item} key={item.id} />}
         />
       ) : (
         <Text style={styles.descr}>No tasks</Text>

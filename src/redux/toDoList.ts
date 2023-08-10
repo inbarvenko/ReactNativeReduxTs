@@ -1,7 +1,13 @@
 import {createSlice} from '@reduxjs/toolkit';
 import type {PayloadAction} from '@reduxjs/toolkit';
 import {ToDoType, FilterEnum} from '../../types';
-import {addTodo, changeTitle, deleteTodo, getTodos, toggleCompleted} from '../db/todoApi';
+import {
+  addTodo,
+  changeTitle,
+  deleteTodo,
+  getTodos,
+  toggleCompleted,
+} from '../db/todoApi';
 
 type InitialState = {
   toDoList: ToDoType[];
@@ -28,29 +34,38 @@ const toDoList = createSlice({
     },
     addTask: (state, action: PayloadAction<string>) => {
       const titleTrim = action.payload.trim();
-      if (titleTrim){
+      if (titleTrim) {
         const newTask: ToDoType = {
           title: titleTrim,
           completed: false,
           id: Date.now(),
         };
-        // state.toDoList.push(newTask);
 
         addTodo(newTask);
-        if( state.activeTasks ) ++state.activeTasks
+        if (state.currentPage == 1) {
+          state.toDoList.unshift(newTask);
+          state.toDoList.pop();
+        }
+        if (state.activeTasks != null) state.activeTasks++;
       }
     },
     removeTask: (state, action: PayloadAction<number>) => {
-      // state.toDoList = state.toDoList.filter(t => t.id !== action.payload);
-      deleteTodo(action.payload)
+      deleteTodo(action.payload);
     },
-    changeStatusTask: (state, action: PayloadAction<{id: number, completed: boolean}>) => {
-      if( state.activeTasks ) {
-        if(action.payload.completed) ++state.activeTasks
-        else --state.activeTasks
+    changeStatusTask: (
+      state,
+      action: PayloadAction<{id: number; completed: boolean}>,
+    ) => {
+      toggleCompleted(action.payload.id, action.payload.completed);
+      // state.toDoList.forEach(t => {
+      //   if (t.id == action.payload.id) {
+      //     t.completed = !t.completed;
+      //   }
+      // });
+      if (state.activeTasks != null) {
+        if (action.payload.completed) ++state.activeTasks;
+        else --state.activeTasks;
       }
-      console.log(action.payload.completed)
-      toggleCompleted(action.payload.id, action.payload.completed)
     },
     setCurrentPage: (state, action: PayloadAction<number>) => {
       state.currentPage = action.payload;
@@ -65,7 +80,7 @@ const toDoList = createSlice({
         }
         return item;
       });
-      changeTitle(action.payload.id, action.payload.title.trim())
+      changeTitle(action.payload.id, action.payload.title.trim());
     },
   },
   extraReducers: builder => {
@@ -73,7 +88,7 @@ const toDoList = createSlice({
       try {
         if (action.payload) {
           state.pages = action.payload.pages;
-          state.toDoList = action.payload.toDoList;
+          state.toDoList = action.payload.toDoList || [];
           state.activeTasks = action.payload.activeTasks;
         }
       } catch (err) {
