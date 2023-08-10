@@ -1,7 +1,7 @@
 import {createSlice} from '@reduxjs/toolkit';
 import type {PayloadAction} from '@reduxjs/toolkit';
 import {ToDoType, FilterEnum} from '../../types';
-import {addTodo, deleteTodo, getTodos, toggleCompleted} from '../db/todoApi';
+import {addTodo, changeTitle, deleteTodo, getTodos, toggleCompleted} from '../db/todoApi';
 
 type InitialState = {
   toDoList: ToDoType[];
@@ -65,6 +65,7 @@ const toDoList = createSlice({
         }
         return item;
       });
+      changeTitle(action.payload.id, action.payload.title.trim())
     },
   },
   extraReducers: builder => {

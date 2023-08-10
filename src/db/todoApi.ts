@@ -18,7 +18,8 @@ export const getTodos = createAsyncThunk(
     let res = await supabase
     .from('todo')
     .select('*', { count: 'exact' })
-    .range(--page * 5, page * 5 + 4);
+    .range(--page * 5, page * 5 + 4)
+    .order('id', { ascending: false });
 
     let arr = [1];
     if(res.count) arr = makeArray(res.count);
@@ -46,6 +47,15 @@ export const toggleCompleted = async (id: number, completed: boolean) => {
     const { data, error } = await supabase
         .from('todo')
         .update({ completed: !completed })
+        .eq('id', id)
+    if (error) console.log(error.message)
+    else return data;
+}
+
+export const changeTitle = async (id: number, title: string) => {
+    const { data, error } = await supabase
+        .from('todo')
+        .update({ title: title })
         .eq('id', id)
     if (error) console.log(error.message)
     else return data;
