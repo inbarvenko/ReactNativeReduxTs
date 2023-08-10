@@ -14,7 +14,7 @@ type InitialState = {
 const initialState: InitialState = {
   toDoList: [],
   filter: FilterEnum.all,
-  pages: [1, 2],
+  pages: [1],
   currentPage: 1,
   activeTasks: 0,
 };
