@@ -1,13 +1,13 @@
-import {createSlice} from '@reduxjs/toolkit';
+import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
 import type {PayloadAction} from '@reduxjs/toolkit';
 import {ToDoType, FilterEnum} from '../../types';
 import {
-  addTodo,
-  changeTitle,
-  deleteTodo,
-  getTodos,
-  toggleCompleted,
+  getTodosRequest,
 } from '../db/todoApi';
+
+
+export const getTodos = createAsyncThunk('todos/getTodos', getTodosRequest);
+
 
 type InitialState = {
   toDoList: ToDoType[];
@@ -33,35 +33,30 @@ const toDoList = createSlice({
       state.filter = action.payload;
     },
     addTask: (state, action: PayloadAction<string>) => {
-      const titleTrim = action.payload.trim();
-      if (titleTrim) {
-        const newTask: ToDoType = {
-          title: titleTrim,
-          completed: false,
-          id: Date.now(),
-        };
-
-        addTodo(newTask);
-        if (state.currentPage == 1) {
-          state.toDoList.unshift(newTask);
-          state.toDoList.pop();
-        }
-        if (state.activeTasks != null) state.activeTasks++;
-      }
+      if (!action.payload) {return;}
+      if (state.activeTasks === null) {return;}
+      state.activeTasks++;
     },
     removeTask: (state, action: PayloadAction<number>) => {
-      deleteTodo(action.payload);
+      state.toDoList.forEach(t => {
+        if (t.id !== action.payload) {return;}
+        if (t.completed) {return;}
+        if (state.activeTasks === null) {return;}
+
+        state.activeTasks--;
+      });
+
+      state.toDoList = state.toDoList.filter((t) => t.id !== action.payload);
     },
-    changeStatusTask: (
+    toggleCompleted: (
       state,
       action: PayloadAction<{id: number; completed: boolean}>,
     ) => {
-      toggleCompleted(action.payload.id, action.payload.completed);
-      // state.toDoList.forEach(t => {
-      //   if (t.id == action.payload.id) {
-      //     t.completed = !t.completed;
-      //   }
-      // });
+      state.toDoList.forEach(t => {
+        if (t.id === action.payload.id) {
+          t.completed = !t.completed;
+        }
+      });
       if (state.activeTasks != null) {
         if (action.payload.completed) ++state.activeTasks;
         else --state.activeTasks;
@@ -80,22 +75,16 @@ const toDoList = createSlice({
         }
         return item;
       });
-      changeTitle(action.payload.id, action.payload.title.trim());
     },
   },
   extraReducers: builder => {
     builder.addCase(getTodos.fulfilled, (state, action) => {
-      try {
-        if (action.payload) {
-          state.pages = action.payload.pages;
-          state.toDoList = action.payload.toDoList || [];
-          state.activeTasks = action.payload.activeTasks;
-        }
-      } catch (err) {
-        console.log(`111 Error! Unable to get todos! ${err}`);
+      if (action.payload) {
+        state.pages = action.payload.pages;
+        state.toDoList = action.payload.toDoList || [];
+        state.activeTasks = action.payload.activeTasks;
       }
     });
-
     builder.addCase(getTodos.rejected, (state, action) => {
       console.log(`222 Error! Unable to get todos!`);
     });
@@ -107,7 +96,7 @@ export const {
   changeFilter,
   addTask,
   removeTask,
-  changeStatusTask,
+  toggleCompleted,
   changeTitleTask,
   setCurrentPage,
 } = toDoList.actions;

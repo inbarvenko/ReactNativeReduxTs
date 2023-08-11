@@ -1,70 +1,70 @@
-import {createAsyncThunk} from '@reduxjs/toolkit';
-import {ToDoType} from '../../types';
 import {supabase} from './initSupabase';
 import 'react-native-url-polyfill/auto';
 
-const makeArray = (num: number) => {
-  const array = [];
-  num = Math.ceil(num / 5);
-  while (num > 0) {
-    array.unshift(num--);
-  }
-  return array;
+
+export const getTodosRequest = async (page: number) => {
+  let {count, data, error} = await supabase
+    .from('todo')
+    .select('*', {count: 'exact'})
+    .order('created_at', {ascending: false})
+    .range(--page * 5, page * 5 + 5);
+
+  if (!count) {return;}
+  const arr = Array.from({length: Math.ceil(count / 5)}, (e, i) => i + 1);
+
+  let {count: activeCount, error: activeError} = await supabase
+    .from('todo')
+    .select('*', {count: 'exact'})
+    .eq('completed', false);
+
+  if (error || activeError)
+    {console.log(error?.message, '\n', activeError?.message);}
+  else {return {toDoList: data, pages: arr, activeTasks: activeCount};}
 };
 
-export const getTodos = createAsyncThunk(
-  'todos/getTodos',
-  async (page: number) => {
-    let {count, data, error} = await supabase
-      .from('todo')
-      .select('*', {count: 'exact'})
-      .order('id', {ascending: false})
-      .range(--page * 5, page * 5 + 4);
 
-    // let todos: ToDoType[] = data?.sort((a, b) => a.id - b.id) || [];
+export const addTodoRequest = async (title: string) => {
+  const {error} = await supabase
+    .from('todo')
+    .insert([{title}]);
 
-    let arr = [1];
-    if (count) arr = await makeArray(count);
-
-    let res = await supabase
-      .from('todo')
-      .select('*', {count: 'exact'})
-      .eq('completed', false);
-
-    // console.log('tasks:' , tasks, '\n', )
-
-    if (error || res.error)
-      console.log(error?.message, '\n', res.error?.message);
-    else return {toDoList: data, pages: arr, activeTasks: res.count};
-  },
-);
-
-export const addTodo = async (newTask: ToDoType) => {
-  let {data, error} = await supabase.from('todo').insert([newTask]);
-  if (error) console.log(error.message);
-  else return data;
+  if (error) {
+    console.log(error.message);
+  } else {return true;}
 };
 
-export const toggleCompleted = async (id: number, completed: boolean) => {
-  const {data, error} = await supabase
+
+export const toggleCompletedRequest = async (id: number, completed: boolean) => {
+  const {error} = await supabase
     .from('todo')
     .update({completed: !completed})
     .eq('id', id);
-  if (error) console.log(error.message);
-  else return data;
+
+  if (error) {
+    console.log(error.message);
+  } else {return true;}
 };
 
-export const changeTitle = async (id: number, title: string) => {
-  const {data, error} = await supabase
+
+export const changeTitleRequest = async (id: number, title: string) => {
+  const {error} = await supabase
     .from('todo')
     .update({title: title})
     .eq('id', id);
-  if (error) console.log(error.message);
-  else return data;
+
+  if (error) {
+    console.log(error.message);
+  } else {return true;}
 };
 
-export const deleteTodo = async (id: number) => {
-  const {error} = await supabase.from('todo').delete().eq('id', id);
-  if (error) console.log(error.message);
-  else return true;
+
+export const deleteTodoRequest = async (id: number) => {
+  const {error} = await supabase
+    .from('todo')
+    .delete()
+    .eq('id', id);
+
+  if (error) {
+    console.log(error.message);
+  } else {return true;}
 };

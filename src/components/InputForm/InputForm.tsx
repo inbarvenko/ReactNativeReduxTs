@@ -1,30 +1,14 @@
 import React, {useState} from 'react';
-import {StyleSheet, TextInput, View} from 'react-native';
+import {TextInput, View} from 'react-native';
 import {ButtonOutline} from 'react-native-ui-buttons';
+import styles from './InputForm.module';
 
 interface Props {
   onClickSave: (title: string) => void;
 }
 
-const InputForm = (props: Props) => {
+const InputForm: React.FC<Props> = (props: Props) => {
   const [title, setTitle] = useState('');
-
-  const styles = StyleSheet.create({
-    container: {
-      flexDirection: 'row',
-      justifyContent: 'space-evenly',
-      marginTop: 10,
-      alignContent: 'center',
-      textAlign: 'center',
-    },
-    input: {
-      width: '70%',
-      backgroundColor: 'lavenderblush',
-      color: 'black',
-      textAlign: 'center',
-      fontFamily: 'Montserrat',
-    },
-  });
 
   const saveTaskTitle = () => {
     props.onClickSave(title);
@@ -34,6 +18,7 @@ const InputForm = (props: Props) => {
   const changingTitle = (text: string) => {
     setTitle(text);
   };
+  
 
   return (
     <View style={styles.container}>
@@ -42,7 +27,10 @@ const InputForm = (props: Props) => {
         onChangeText={changingTitle}
         value={title}
       />
-      <ButtonOutline title="Add" onPress={saveTaskTitle} />
+      <ButtonOutline 
+        title="Add" 
+        onPress={saveTaskTitle} 
+      />
     </View>
   );
 };

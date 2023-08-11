@@ -1,96 +1,92 @@
 import React, {useState} from 'react';
-import {StyleSheet, Text, TextInput, View} from 'react-native';
+import {
+  NativeSyntheticEvent,
+  Text,
+  TextInput,
+  TextInputSubmitEditingEventData,
+  View,
+} from 'react-native';
 import {ToDoType} from '../../../types';
 import BouncyCheckbox from 'react-native-bouncy-checkbox';
 import {
-  changeStatusTask,
+  toggleCompleted,
   changeTitleTask,
   removeTask,
 } from '../../redux/toDoList';
 import {useAppDispatch} from '../../redux/hooks';
 import {ButtonSolid} from 'react-native-ui-buttons';
+import styles from './Todo.module';
+import { changeTitleRequest, deleteTodoRequest, toggleCompletedRequest } from '../../db/todoApi';
 
 interface Props {
   todo: ToDoType;
-  delFun: () => void;
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'space-evenly',
-    marginTop: 10,
-    alignContent: 'center',
-  },
-  input: {
-    flex: 0.9,
-    backgroundColor: 'lavenderblush',
-    color: 'black',
-    textAlign: 'center',
-    fontFamily: 'Montserrat',
-  },
-  title: {
-    flex: 2,
-    fontFamily: 'Montserrat',
-    textAlign: 'center',
-    alignSelf: 'center',
-
-    color: 'white',
-  },
-  completed: {
-    flex: 2,
-    fontFamily: 'Montserrat',
-    textAlign: 'center',
-    alignSelf: 'center',
-
-    color: 'black',
-    // textDecorationLine: 'line-through',
-  },
-});
-
-const Todo = (props: Props) => {
+const Todo: React.FC<Props> = (props: Props) => {
   const dispatch = useAppDispatch();
-  const [change, setChange] = useState(false);
+  const [changeTitle, setChangeTitle] = useState(false);
 
-  const deleteTodo = () => {
-    props.delFun();
-    dispatch(removeTask(props.todo.id));
+  const deleteTodo = async () => {
+    const res = await deleteTodoRequest(props.todo.id);
+    if(!res) {return;}
+
+    await dispatch(removeTask(props.todo.id));
   };
 
-  const editTodo = () => {
-    dispatch(changeStatusTask({id: props.todo.id, completed: props.todo.completed}));
+  const onToggleCompleted = async () => {
+    const res = await toggleCompletedRequest(props.todo.id, props.todo.completed)
+    if(!res) {return;}
+
+    await dispatch(
+      toggleCompleted({
+        id: props.todo.id,
+        completed: props.todo.completed,
+      }),
+    );
   };
 
-  const changeTodo = () => {
-    setChange(true);
+  const onLongPressChangeTitle = () => {
+    setChangeTitle(true);
   };
 
-  const titleTodo = (id: number, title: string) => {
-    dispatch(changeTitleTask({id, title}));
-    setChange(false);
+  const onChangeTitle = async (
+    e: NativeSyntheticEvent<TextInputSubmitEditingEventData>,
+  ) => {
+    const titleTrim = e.nativeEvent.text.trim();
+    if (!titleTrim) {return;}
+
+    const res = await changeTitleRequest(props.todo.id, titleTrim);
+    if (!res) {return;}
+
+    await dispatch(
+      changeTitleTask({
+        id: props.todo.id,
+        title: e.nativeEvent.text,
+      }),
+    );
+    setChangeTitle(false);
   };
 
   return (
     <View style={styles.container}>
       <BouncyCheckbox
         isChecked={props.todo.completed}
-        onPress={editTodo}
+        onPress={onToggleCompleted}
         fillColor="hotpink"
       />
-      {change ? (
+      {changeTitle ? (
         <TextInput
           autoFocus
           style={styles.input}
           defaultValue={props.todo.title}
-          onBlur={() => setChange(false)}
-          onSubmitEditing={(e) => {titleTodo(props.todo.id, e.nativeEvent.text)}}
+          onBlur={() => setChangeTitle(false)}
+          onSubmitEditing={onChangeTitle}
         />
       ) : (
         <Text
           style={props.todo.completed ? styles.completed : styles.title}
-          onLongPress={changeTodo}>
-          {props.todo.title}
+          onLongPress={onLongPressChangeTitle}>
+            {props.todo.title}
         </Text>
       )}
       <ButtonSolid title="Delete" onPress={deleteTodo} />
