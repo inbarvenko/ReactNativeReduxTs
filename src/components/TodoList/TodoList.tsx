@@ -31,8 +31,8 @@ const TodoList: React.FC = () => {
   }, [toDoList.length]);
 
   useEffect(() => {
-    dispatch(getTodos(currentPage));
-  }, [currentPage, activeTasks]);
+    dispatch(getTodos({page: currentPage, filter}));
+  }, [currentPage, activeTasks, filter]);
 
 
   const changeCurrentPage = (e: GestureResponderEvent, parametr: number) => {

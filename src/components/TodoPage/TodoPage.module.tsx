@@ -19,6 +19,25 @@ const styles = StyleSheet.create({
     fontSize: 30,
     alignSelf: 'center',
   },
+  selectButton: {
+    marginHorizontal: 10,
+    flex: 0.4,
+    height: 40,
+    alignSelf: 'center'
+  },
+  selectSection: {
+    flexDirection: 'row',
+    alignSelf: 'center',
+    marginVertical: 5,
+  },
+  fontFamilyMontserrat: {
+    fontFamily: 'Montserrat',
+    fontSize: 15,
+  },
+  fontFamilyMontserratRegular: {
+    fontFamily: 'MontserratRegular',
+    fontSize: 15,
+  }
 });
 
 export default styles;

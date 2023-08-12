@@ -1,13 +1,17 @@
+import { FilterEnum } from '../../types';
 import {supabase} from './initSupabase';
 import 'react-native-url-polyfill/auto';
 
 
-export const getTodosRequest = async (page: number) => {
+export const getTodosRequest = async (params: {page: number, filter: FilterEnum}) => {
+  const filterBoolean = (params.filter === 'all') ? [true, false]: [(params.filter === 'completed')];
+
   let {count, data, error} = await supabase
     .from('todo')
     .select('*', {count: 'exact'})
+    .in('completed', filterBoolean)
     .order('created_at', {ascending: false})
-    .range(--page * 5, page * 5 + 5);
+    .range(--params.page * 5, params.page * 5 + 5);
 
   if (!count) {return;}
   const arr = Array.from({length: Math.ceil(count / 5)}, (e, i) => i + 1);

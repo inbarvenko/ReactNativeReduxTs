@@ -4,6 +4,10 @@
     {
       "path": "assets/fonts/Montserrat.ttf",
       "sha1": "fca130f21601346cce37bb8a9526ff01af66d912"
+    },
+    {
+      "path": "assets/fonts/MontserratRegular.ttf",
+      "sha1": "de57aa03e4821fdbe6c34ec2c895e8b5c914e837"
     }
   ]
 }
