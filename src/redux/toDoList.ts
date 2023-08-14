@@ -1,17 +1,16 @@
 import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
 import type {PayloadAction} from '@reduxjs/toolkit';
 import {ToDoType, FilterEnum} from '../../types';
-import {
-  getTodosRequest,
-} from '../db/todoApi';
-
+import {getTodoIdRequest, getTodosRequest} from '../db/todoApi';
 
 export const getTodos = createAsyncThunk('todos/getTodos', getTodosRequest);
+export const getTodoId = createAsyncThunk('todos/getTodoId', getTodoIdRequest);
 
 
 type InitialState = {
   toDoList: ToDoType[];
   filter: FilterEnum;
+  todo: ToDoType | null;
   pages: number[];
   currentPage: number;
   activeTasks: number | null;
@@ -21,6 +20,7 @@ const initialState: InitialState = {
   toDoList: [],
   filter: FilterEnum.all,
   pages: [1],
+  todo: null,
   currentPage: 1,
   activeTasks: 0,
 };
@@ -33,20 +33,30 @@ const toDoList = createSlice({
       state.filter = action.payload;
     },
     addTask: (state, action: PayloadAction<string>) => {
-      if (!action.payload) {return;}
-      if (state.activeTasks === null) {return;}
+      if (!action.payload) {
+        return;
+      }
+      if (state.activeTasks === null) {
+        return;
+      }
       state.activeTasks++;
     },
     removeTask: (state, action: PayloadAction<number>) => {
       state.toDoList.forEach(t => {
-        if (t.id !== action.payload) {return;}
-        if (t.completed) {return;}
-        if (state.activeTasks === null) {return;}
+        if (t.id !== action.payload) {
+          return;
+        }
+        if (t.completed) {
+          return;
+        }
+        if (state.activeTasks === null) {
+          return;
+        }
 
         state.activeTasks--;
       });
 
-      state.toDoList = state.toDoList.filter((t) => t.id !== action.payload);
+      state.toDoList = state.toDoList.filter(t => t.id !== action.payload);
     },
     toggleCompleted: (
       state,
@@ -58,8 +68,11 @@ const toDoList = createSlice({
         }
       });
       if (state.activeTasks != null) {
-        if (action.payload.completed) ++state.activeTasks;
-        else --state.activeTasks;
+        if (action.payload.completed) {
+          ++state.activeTasks;
+          return;
+        }
+        --state.activeTasks;
       }
     },
     setCurrentPage: (state, action: PayloadAction<number>) => {
@@ -86,7 +99,15 @@ const toDoList = createSlice({
       }
     });
     builder.addCase(getTodos.rejected, (state, action) => {
-      console.log(`222 Error! Unable to get todos!`);
+      console.log(`Error! Unable to get todos!`);
+    });
+    builder.addCase(getTodoId.fulfilled, (state, action) => {
+      if (action.payload) {
+        state.todo = action.payload.todo;
+      }
+    });
+    builder.addCase(getTodoId.rejected, (state, action) => {
+      console.log(`Error! Unable to get todo!`);
     });
   },
 });

@@ -27,6 +27,20 @@ export const getTodosRequest = async (params: {page: number, filter: FilterEnum}
 };
 
 
+export const getTodoIdRequest = async (id: string) => {
+
+  let {data, error} = await supabase
+    .from('todo')
+    .select('*')
+    .eq('id', id)
+
+  if(!data) {return {}}
+  
+  if (error) {console.log(error?.message);}
+  else {return {todo: data[0] }}
+};
+
+
 export const addTodoRequest = async (title: string) => {
   const {error} = await supabase
     .from('todo')

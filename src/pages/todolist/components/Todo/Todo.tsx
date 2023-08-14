@@ -6,20 +6,21 @@ import {
   TextInputSubmitEditingEventData,
   View,
 } from 'react-native';
-import {ToDoType} from '../../../types';
+import {ToDoType} from '../../../../../types';
 import BouncyCheckbox from 'react-native-bouncy-checkbox';
 import {
   toggleCompleted,
   changeTitleTask,
   removeTask,
-} from '../../redux/toDoList';
-import {useAppDispatch} from '../../redux/hooks';
+} from '../../../../redux/toDoList';
+import {useAppDispatch} from '../../../../redux/hooks';
 import {ButtonSolid} from 'react-native-ui-buttons';
 import styles from './Todo.module';
-import { changeTitleRequest, deleteTodoRequest, toggleCompletedRequest } from '../../db/todoApi';
+import { changeTitleRequest, deleteTodoRequest, toggleCompletedRequest } from '../../../../db/todoApi';
 
 interface Props {
   todo: ToDoType;
+  navigation: any;
 }
 
 const Todo: React.FC<Props> = (props: Props) => {
@@ -27,22 +28,26 @@ const Todo: React.FC<Props> = (props: Props) => {
   const [changeTitle, setChangeTitle] = useState(false);
 
   const deleteTodo = async () => {
-    const res = await deleteTodoRequest(props.todo.id);
-    if(!res) {return;}
+    try{
+      const res = await deleteTodoRequest(props.todo.id);
+      if(!res) {return;}
 
-    await dispatch(removeTask(props.todo.id));
+      await dispatch(removeTask(props.todo.id));
+    } catch(error) {console.log(error)}
   };
 
   const onToggleCompleted = async () => {
-    const res = await toggleCompletedRequest(props.todo.id, props.todo.completed)
-    if(!res) {return;}
+    try{
+      const res = await toggleCompletedRequest(props.todo.id, props.todo.completed)
+      if(!res) {return;}
 
-    await dispatch(
-      toggleCompleted({
-        id: props.todo.id,
-        completed: props.todo.completed,
-      }),
-    );
+      await dispatch(
+        toggleCompleted({
+          id: props.todo.id,
+          completed: props.todo.completed,
+        }),
+      );
+    } catch(error) {console.log(error)}
   };
 
   const onLongPressChangeTitle = () => {
@@ -55,16 +60,18 @@ const Todo: React.FC<Props> = (props: Props) => {
     const titleTrim = e.nativeEvent.text.trim();
     if (!titleTrim) {return;}
 
-    const res = await changeTitleRequest(props.todo.id, titleTrim);
-    if (!res) {return;}
+    try{
+      const res = await changeTitleRequest(props.todo.id, titleTrim);
+      if (!res) {return;}
 
-    await dispatch(
-      changeTitleTask({
-        id: props.todo.id,
-        title: e.nativeEvent.text,
-      }),
-    );
-    setChangeTitle(false);
+      await dispatch(
+        changeTitleTask({
+          id: props.todo.id,
+          title: titleTrim,
+        }),
+      );
+      setChangeTitle(false);
+    } catch(error) {console.log(error)}
   };
 
   return (
@@ -85,7 +92,8 @@ const Todo: React.FC<Props> = (props: Props) => {
       ) : (
         <Text
           style={props.todo.completed ? styles.completed : styles.title}
-          onLongPress={onLongPressChangeTitle}>
+          onLongPress={onLongPressChangeTitle}
+          onPress={() => props.navigation.navigate('Todo', props.todo.id)}>
             {props.todo.title}
         </Text>
       )}

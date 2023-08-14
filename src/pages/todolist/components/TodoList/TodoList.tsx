@@ -5,14 +5,18 @@ import {
   GestureResponderEvent,
   View,
 } from 'react-native';
-import {useAppDispatch, useAppSelector} from '../../redux/hooks';
+import {useAppDispatch, useAppSelector} from '../../../../redux/hooks';
 import Todo from '../Todo/Todo';
-import {setCurrentPage} from '../../redux/toDoList';
-import {getTodos} from '../../redux/toDoList';
+import {setCurrentPage} from '../../../../redux/toDoList';
+import {getTodos} from '../../../../redux/toDoList';
 import {ButtonOutline} from 'react-native-ui-buttons';
 import styles from './TodoList.module';
 
-const TodoList: React.FC = () => {
+type Props = {
+  navigation: any;
+}
+
+const TodoList: React.FC<Props> = (props) => {
   const dispatch = useAppDispatch();
   const {
     toDoList, 
@@ -31,7 +35,9 @@ const TodoList: React.FC = () => {
   }, [toDoList.length]);
 
   useEffect(() => {
-    dispatch(getTodos({page: currentPage, filter}));
+    try{
+      dispatch(getTodos({page: currentPage, filter}));
+    } catch(error) {console.log(error)}
   }, [currentPage, activeTasks, filter]);
 
 
@@ -45,10 +51,11 @@ const TodoList: React.FC = () => {
     <View>
       {toDoList.length ? (
         <FlatList
+          nestedScrollEnabled
           style={styles.list}
           data={(toDoList.length > 5) ? toDoList.slice(0, -1) : toDoList}
           renderItem={({item}) => (
-            <Todo todo={item} key={item.id} />
+            <Todo todo={item} key={item.id} navigation={props.navigation}/>
           )}
         />
       ) : (
