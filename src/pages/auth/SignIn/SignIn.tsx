@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {ReactNode} from 'react';
 import {View, Text, TextInput} from 'react-native';
 import {yupResolver} from '@hookform/resolvers/yup';
 import {Controller, useForm} from 'react-hook-form';
@@ -6,20 +6,20 @@ import * as yup from 'yup';
 
 import type {ParamListBase} from '@react-navigation/native';
 import type {NativeStackScreenProps} from '@react-navigation/native-stack';
-
+import { Icon } from 'react-native-elements'
 import styles from './SignIn.module';
 import {ButtonSolid} from 'react-native-ui-buttons';
-import { getUser } from '../../../db/userApi';
-import { SignInData } from '../../../../types';
-import { useAppDispatch } from '../../../redux/hooks';
-import { setUser } from '../../../redux/userReducer';
+import {getUser} from '../../../db/userApi';
+import {SignInData} from '../../../../types';
+import {useAppDispatch} from '../../../redux/hooks';
+import {setUser} from '../../../redux/userReducer';
+import Input from '../../../ui/Input/Input';
 
 type Props = NativeStackScreenProps<ParamListBase>;
 
-
 const SignIn: React.FC<Props> = ({navigation}) => {
   const dispatch = useAppDispatch();
-  
+
   const schema = yup.object({
     email: yup
       .string()
@@ -43,13 +43,16 @@ const SignIn: React.FC<Props> = ({navigation}) => {
   const checkSignIn = async (data: SignInData) => {
     try {
       const res = await getUser(data);
-      if (!res) {return console.log()}
+      if (!res) {
+        return console.log();
+      }
 
       await dispatch(setUser(data));
       await navigation.navigate('Home');
-
-    } catch (error) {console.log(error);}
-  }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <View style={styles.screenContainer}>
@@ -58,11 +61,17 @@ const SignIn: React.FC<Props> = ({navigation}) => {
         control={control}
         name="email"
         render={({field: {onChange, onBlur, value}}) => (
-          <TextInput
+          <Input
             placeholder="Email"
+            errors={errors.email}
+            type="numbers-and-punctuation"
             underlineColorAndroid="transparent"
-            style={styles.inputContainer}
+            containerStyle={styles.inputContainer}
+            textStyle={styles.inputText}
+            containerErrorStyle={styles.errorSectionStyle}
+            textErrorStyle={styles.errorTextStyle}
             value={value}
+            hintText="Enter your email"
             onBlur={onBlur}
             onChangeText={onChange}
           />
@@ -72,13 +81,20 @@ const SignIn: React.FC<Props> = ({navigation}) => {
         control={control}
         name="password"
         render={({field: {onChange, onBlur, value}}) => (
-          <TextInput
+          <Input
             placeholder="Password"
+            errors={errors.password}
+            type="default"
             underlineColorAndroid="transparent"
-            style={styles.inputContainer}
+            containerStyle={styles.inputContainer}
+            textStyle={styles.inputText}
+            containerErrorStyle={styles.errorSectionStyle}
+            textErrorStyle={styles.errorTextStyle}
             value={value}
+            hintText="Enter your password"
             onBlur={onBlur}
             onChangeText={onChange}
+            secure
           />
         )}
       />

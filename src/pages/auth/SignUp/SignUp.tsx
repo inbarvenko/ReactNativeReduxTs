@@ -13,6 +13,7 @@ import {newUser} from '../../../db/userApi';
 import {SignUpData} from '../../../../types';
 import {useAppDispatch} from '../../../redux/hooks';
 import {setUser} from '../../../redux/userReducer';
+import Input from '../../../ui/Input/Input';
 
 type Props = NativeStackScreenProps<ParamListBase>;
 
@@ -61,11 +62,17 @@ const SignUp: React.FC<Props> = ({navigation}) => {
         control={control}
         name="email"
         render={({field: {onChange, onBlur, value}}) => (
-          <TextInput
+          <Input
             placeholder="Email"
+            errors={errors.email}
+            type="numbers-and-punctuation"
+            containerStyle={styles.inputContainer}
             underlineColorAndroid="transparent"
-            style={styles.inputContainer}
+            textStyle={styles.inputText}
+            containerErrorStyle={styles.errorSectionStyle}
+            textErrorStyle={styles.errorTextStyle}
             value={value}
+            hintText="Enter your email"
             onBlur={onBlur}
             onChangeText={onChange}
           />
@@ -75,13 +82,20 @@ const SignUp: React.FC<Props> = ({navigation}) => {
         control={control}
         name="password"
         render={({field: {onChange, onBlur, value}}) => (
-          <TextInput
+          <Input
             placeholder="Password"
+            errors={errors.password}
+            type="default"
             underlineColorAndroid="transparent"
-            style={styles.inputContainer}
+            containerStyle={styles.inputContainer}
+            textStyle={styles.inputText}
+            containerErrorStyle={styles.errorSectionStyle}
+            textErrorStyle={styles.errorTextStyle}
             value={value}
+            hintText="Enter your password"
             onBlur={onBlur}
             onChangeText={onChange}
+            secure
           />
         )}
       />
@@ -89,13 +103,20 @@ const SignUp: React.FC<Props> = ({navigation}) => {
         control={control}
         name="repeatPassword"
         render={({field: {onChange, onBlur, value}}) => (
-          <TextInput
-            placeholder="Password again"
+          <Input
+            placeholder="Password"
+            errors={errors.password}
+            type="default"
             underlineColorAndroid="transparent"
-            style={styles.inputContainer}
+            containerStyle={styles.inputContainer}
+            textStyle={styles.inputText}
+            containerErrorStyle={styles.errorSectionStyle}
+            textErrorStyle={styles.errorTextStyle}
             value={value}
+            hintText="Enter your password"
             onBlur={onBlur}
             onChangeText={onChange}
+            secure
           />
         )}
       />
