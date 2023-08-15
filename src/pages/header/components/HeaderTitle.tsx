@@ -13,7 +13,7 @@ const HeaderTitle: React.FC<Props> = ({title}: Props) => {
         source={require('../../../../assets/img/logo.png')}
         style={styles.imageHeader}
       />
-      <Text style={styles.fontFamilyMontserrat}> Fusion {title}</Text>
+      <Text style={styles.fontFamilyMontserrat}>{title}</Text>
     </View>
   );
 };
