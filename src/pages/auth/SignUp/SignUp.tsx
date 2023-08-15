@@ -72,7 +72,7 @@ const SignUp: React.FC<Props> = ({navigation}) => {
             containerErrorStyle={styles.errorSectionStyle}
             textErrorStyle={styles.errorTextStyle}
             value={value}
-            hintText="Enter your email"
+            hint="Enter your email"
             onBlur={onBlur}
             onChangeText={onChange}
           />
@@ -92,7 +92,7 @@ const SignUp: React.FC<Props> = ({navigation}) => {
             containerErrorStyle={styles.errorSectionStyle}
             textErrorStyle={styles.errorTextStyle}
             value={value}
-            hintText="Enter your password"
+            hint="Enter your password"
             onBlur={onBlur}
             onChangeText={onChange}
             secure
@@ -113,7 +113,7 @@ const SignUp: React.FC<Props> = ({navigation}) => {
             containerErrorStyle={styles.errorSectionStyle}
             textErrorStyle={styles.errorTextStyle}
             value={value}
-            hintText="Enter your password"
+            hint="Enter your password again"
             onBlur={onBlur}
             onChangeText={onChange}
             secure

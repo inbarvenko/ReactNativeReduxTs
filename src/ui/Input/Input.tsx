@@ -18,7 +18,7 @@ type Props = {
   containerErrorStyle: StyleProp<ViewStyle>;
   textErrorStyle: StyleProp<TextStyle>;
   value?: string;
-  hintText: string;
+  hint: string;
   onBlur: ((e: NativeSyntheticEvent<TextInputFocusEventData>) => void);
 } & TextInputProps;
 
@@ -30,7 +30,7 @@ const Input: React.FC<Props> = ({
   textErrorStyle,
   errors,
   secure,
-  hintText,
+  hint,
   onBlur,
   ...props }) => {
   const [inputState, setInputState] = React.useState({
@@ -98,7 +98,7 @@ const Input: React.FC<Props> = ({
           !!errors?.message &&
           textErrorStyle,
         ]}
-      >{(errors?.message || hintText) as ReactNode}
+      >{(errors?.message || hint) as ReactNode}
       </Text>
     </View>
   );
