@@ -3,6 +3,7 @@ import {Button, Image, Text, View} from 'react-native';
 import styles from './Header.module';
 import {useAppDispatch, useAppSelector} from '../../../redux/hooks';
 import {removeUser} from '../../../redux/userReducer';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface Props {
   navigation: any;
@@ -10,6 +11,15 @@ interface Props {
 
 const HeaderButtons: React.FC<Props> = ({navigation}: Props) => {
   const dispatch = useAppDispatch();
+
+  const removeUserData = async () => {
+    await dispatch(removeUser());
+    await AsyncStorage.removeItem('user');
+    console.log('removeUser')
+
+    await navigation.navigate('SignIn');
+  };
+
   return (
     <View style={styles.buttonSection}>
       <Button
@@ -23,10 +33,7 @@ const HeaderButtons: React.FC<Props> = ({navigation}: Props) => {
         color="#000"
       />
       <Button
-        onPress={() => {
-          dispatch(removeUser());
-          navigation.navigate('SignIn')
-        }}
+        onPress={removeUserData}
         title="SignOut"
         color="#000"
       />

@@ -1,4 +1,4 @@
-import React, {ReactNode} from 'react';
+import React, {ReactNode, useEffect} from 'react';
 import {View, Text, TextInput} from 'react-native';
 import {yupResolver} from '@hookform/resolvers/yup';
 import {Controller, useForm} from 'react-hook-form';
@@ -6,7 +6,7 @@ import * as yup from 'yup';
 
 import type {ParamListBase} from '@react-navigation/native';
 import type {NativeStackScreenProps} from '@react-navigation/native-stack';
-import { Icon } from 'react-native-elements'
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import styles from './SignIn.module';
 import {ButtonSolid} from 'react-native-ui-buttons';
 import {getUser} from '../../../db/userApi';
@@ -19,6 +19,22 @@ type Props = NativeStackScreenProps<ParamListBase>;
 
 const SignIn: React.FC<Props> = ({navigation}) => {
   const dispatch = useAppDispatch();
+
+  const checkPrevSignIn = async () => { 
+    const prevUser = await AsyncStorage.getItem('user');
+
+    const jsonValue = prevUser != null ? JSON.parse(prevUser) : null;
+    if(jsonValue === null) {return;}
+    
+    console.log("jsonValue get", jsonValue)
+
+    dispatch(setUser(jsonValue));
+    navigation.navigate('Home');
+  }
+
+  useEffect(() => {
+    checkPrevSignIn()
+  }, [])
 
   const schema = yup.object({
     email: yup
@@ -40,6 +56,7 @@ const SignIn: React.FC<Props> = ({navigation}) => {
     },
   });
 
+
   const checkSignIn = async (data: SignInData) => {
     try {
       const res = await getUser(data);
@@ -48,7 +65,13 @@ const SignIn: React.FC<Props> = ({navigation}) => {
       }
 
       await dispatch(setUser(data));
+
+      const jsonValue = JSON.stringify(data);
+      console.log("jsonValue set", jsonValue)
+      await AsyncStorage.setItem('user', jsonValue);
+
       await navigation.navigate('Home');
+      
     } catch (error) {
       console.log(error);
     }
